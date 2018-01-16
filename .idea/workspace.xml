@@ -5,9 +5,8 @@
     <bookmark url="file://$PROJECT_DIR$/../Python/Python35/Lib/site-packages/matplotlib/cm.py" line="24" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ce217c4-5228-41ca-a6e9-2aaf14782189" name="Default" comment="">
+    <list default="true" id="0ce217c4-5228-41ca-a6e9-2aaf14782189" name="Default" comment="机器学习">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -337,6 +336,14 @@
       <option name="presentableId" value="Default" />
       <updated>1513669790669</updated>
     </task>
+    <task id="LOCAL-00001" summary="机器学习">
+      <created>1516087187896</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1516087187896</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView">
@@ -350,7 +357,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17544988" sideWeight="0.4869565" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32972974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -410,6 +416,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="机器学习" />
+    <option name="LAST_COMMIT_MESSAGE" value="机器学习" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
