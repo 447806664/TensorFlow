@@ -41,8 +41,7 @@ data = data[::-1]
 # plt.title('股票最高价变化图')
 # plt.show()
 
-# 标准化
-# 两种方法：
+# 标准化 两种方法：
 # 1 (x-min)/(max-min) 归一(0,1)
 # 2 (x-均值mean)/标准差standard deviation
 normalize_data = (data - np.mean(data)) / np.std(data)
