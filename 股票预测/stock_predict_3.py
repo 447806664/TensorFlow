@@ -180,7 +180,7 @@ def prediction(time_step=10):
         line1, = plt.plot(x_date, test_predict, color='b', )
         line2, = plt.plot(x_date, test_y, color='r')
 
-        plt.xlabel('\n交易日期')
+        plt.xlabel('交易日期')
         plt.ylabel('股票价格(元)')
         plt.title('股票价格预测图(准确率:%.2f%%)' % (acc * 100))
         plt.legend((line1, line2), ('预测数据', '真实数据'), loc='upper left')
