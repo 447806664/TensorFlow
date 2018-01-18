@@ -182,11 +182,11 @@ for i in range(max_epochs):
     w1 += learn_rate * dw1
     b1 += learn_rate * db1
 
-    # print("BP神经网络训练得到参数如下：")
-    # print("输入层权值:" + str(w1))
-    # print("输入层阈值:" + str(b1))
-    # print("隐含层权值:" + str(w2))
-    # print("隐含层阈值:" + str(b2))
+    print("BP神经网络训练得到参数如下：")
+    print("输入层权值:" + str(w1))
+    print("输入层阈值:" + str(b1))
+    print("隐含层权值:" + str(w2))
+    print("隐含层阈值:" + str(b2))
 
     # 误差曲线图
     error_history10 = np.log10(error_history)

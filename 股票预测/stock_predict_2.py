@@ -191,8 +191,8 @@ def prediction(time_step=20):
 
         plt.xlabel('日期(2014-09-03至2015-11-27)')
         plt.ylabel('股票价格(元)')
-        plt.title('股票价格预测图')
-        plt.legend((line1, line2), ('预测值', '原始值'), loc='upper left')
+        plt.title('股票价格预测图(准确率:%.2f%%)' % (acc * 100))
+        plt.legend((line1, line2), ('预测数据', '真实数据'), loc='upper left')
         plt.savefig('figure/股票价格预测图.png', dpi=300)
         plt.show()
 
