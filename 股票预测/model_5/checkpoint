@@ -1,2 +1,0 @@
-model_checkpoint_path: "stock_predict.ckpt"
-all_model_checkpoint_paths: "stock_predict.ckpt"

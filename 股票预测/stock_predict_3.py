@@ -36,7 +36,7 @@ lr = 0.0005         # 学习率
 # ——————————————————导入数据——————————————————————
 f = codecs.open('dataset/dataset_3.tsv', 'r', 'utf-8')
 df = pd.read_table(f)  # 读入股票数据
-data = df.iloc[:, 3:4].values  # 取第3列
+data = df.iloc[:, [3, -1]].values  # 取第3列和最后一列
 
 
 # 获取训练集
@@ -51,7 +51,7 @@ def get_train_data(batch_size=40, time_step=10, train_begin=0, train_end=200):
         if i % batch_size == 0:
             batch_index.append(i)
         x = normalized_train_data[i:i + time_step, :input_size]
-        y = normalized_train_data[i + 1:i + 1 + time_step, :input_size]
+        y = normalized_train_data[i:i + time_step, -1, np.newaxis]
         train_x.append(x.tolist())
         train_y.append(y.tolist())
     batch_index.append((len(normalized_train_data) - time_step))
@@ -71,13 +71,11 @@ def get_test_data(time_step=20, test_begin=200):
     normalized_test_data = (data_test - mean) / std  # 标准化
     size = (len(normalized_test_data) + time_step - 1) // time_step  # 有size个sample
     test_x, test_y = [], []
-    for i in range(size - 1):
+    for i in range(size):
         x = normalized_test_data[i * time_step:(i + 1) * time_step, :input_size]
-        y = normalized_test_data[i * time_step:(i + 1) * time_step, :input_size]
+        y = normalized_test_data[i * time_step:(i + 1) * time_step, -1]
         test_x.append(x.tolist())
         test_y.extend(y)
-    test_x.append((normalized_test_data[(i + 1) * time_step:, :input_size]).tolist())
-    test_y.extend((normalized_test_data[(i + 1) * time_step:, :input_size]).tolist())
     return mean, std, test_x, test_y, date
 
 
@@ -128,7 +126,7 @@ def train_lstm(batch_size=40, time_step=10, train_begin=0, train_end=200):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         # 重复训练
-        for i in range(2000):
+        for i in range(1000):
             for step in range(len(batch_index) - 1):
                 _, loss_ = sess.run([train_op, loss], feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
                                                                  Y: train_y[batch_index[step]:batch_index[step + 1]]})
@@ -138,15 +136,15 @@ def train_lstm(batch_size=40, time_step=10, train_begin=0, train_end=200):
         print("模型训练已完成！")
 
 
-# train_lstm()
+train_lstm()
 
 
 # ————————————————预测模型————————————————————
 def prediction(time_step=10):
     X = tf.placeholder(tf.float32, shape=[None, time_step, input_size])
     mean, std, test_x, test_y, date = get_test_data(time_step)
-    # with tf.variable_scope("sec_lstm", reuse=True):
-    with tf.variable_scope("sec_lstm"):
+    with tf.variable_scope("sec_lstm", reuse=True):
+    # with tf.variable_scope("sec_lstm"):
         pred, _ = lstm(X)
     saver = tf.train.Saver(tf.global_variables())
     with tf.Session() as sess:
@@ -159,24 +157,30 @@ def prediction(time_step=10):
             predict = prob.reshape((-1))
             test_predict.extend(predict)
         test_y = np.array(test_y) * std[0] + mean[0]
+        test_x = np.array(test_x) * std[0] + mean[0]
         test_predict = np.array(test_predict) * std[0] + mean[0]
+        print('test_x', test_x)
+        print('test_y', test_y)
+        print('test_predict', test_predict)
         acc = 1 - np.average(np.abs(test_predict - test_y[:len(test_predict)]) / test_y[:len(test_predict)])  # 偏差程度
         print("模型准确率: %.2f%%" % (acc * 100))
 
         # 以折线图表示结果
         plt.figure(figsize=(16, 9))
+        line1, = plt.plot(list(range(len(test_predict))), test_predict, color='b', )
+        line2, = plt.plot(list(range(len(test_y))), test_y, color='r')
 
-        # 生成横坐标
-        x_date = [datetime.strptime(str(d), '%Y%m%d').date() for d in date]
-        # 横坐标时间格式化
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d'))
-        # 横坐标标签显示数量
-        plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(16))
-        # 自动旋转日期标记
-        plt.gcf().autofmt_xdate()
-        plt.grid(linestyle='--')
-        line1, = plt.plot(x_date, test_predict, color='b', )
-        line2, = plt.plot(x_date, test_y, color='r')
+        # # 生成横坐标
+        # x_date = [datetime.strptime(str(d), '%Y%m%d').date() for d in date]
+        # # 横坐标时间格式化
+        # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y/%m/%d'))
+        # # 横坐标标签显示数量
+        # plt.gca().xaxis.set_major_locator(mticker.MaxNLocator(16))
+        # # 自动旋转日期标记
+        # plt.gcf().autofmt_xdate()
+        # plt.grid(linestyle='--')
+        # line1, = plt.plot(x_date, test_predict, color='b', )
+        # line2, = plt.plot(x_date, test_y, color='r')
 
         plt.xlabel('交易日期')
         plt.ylabel('股票价格(元)')

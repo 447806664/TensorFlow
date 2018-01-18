@@ -168,7 +168,11 @@ def prediction(time_step=20):
             predict = prob.reshape((-1))
             test_predict.extend(predict)
         test_y = np.array(test_y) * std[7] + mean[7]
+        test_x = np.array(test_x) * std[7] + mean[7]
         test_predict = np.array(test_predict) * std[7] + mean[7]
+        print('test_x', test_x)
+        print('test_y', test_y)
+        print('test_predict', test_predict)
         acc = 1 - np.average(np.abs(test_predict - test_y[:len(test_predict)]) / test_y[:len(test_predict)])  # 偏差程度
         print("模型准确率: %.2f%%" % (acc * 100))
 
