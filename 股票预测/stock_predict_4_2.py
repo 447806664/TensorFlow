@@ -97,7 +97,7 @@ biases = {
 
 
 # —————————————————————定义LSTM—————————————————————
-def lstm(X, keep_prob):
+def lstm(X):
     batch_size = tf.shape(X)[0]
     w_in = weights['in']
     b_in = biases['in']
@@ -106,8 +106,6 @@ def lstm(X, keep_prob):
     input_rnn = tf.reshape(input_rnn, [-1, time_step, rnn_unit])  # 将tensor转成3维，作为lstm cell的输入
     # 单层LSTM
     cell = tf.nn.rnn_cell.BasicLSTMCell(rnn_unit)
-    # 过度拟合处理
-    cell = rnn.DropoutWrapper(cell=cell, input_keep_prob=1.0, output_keep_prob=keep_prob)
     # 构建多层LSTM
     mutil_cell = rnn.MultiRNNCell([cell] * 2, state_is_tuple=True)
     # 初始化state
@@ -126,10 +124,9 @@ def lstm(X, keep_prob):
 def train_lstm():
     X = tf.placeholder(tf.float32, shape=[None, time_step, input_size])
     Y = tf.placeholder(tf.float32, shape=[None, time_step, output_size])
-    keep_prob = tf.placeholder(tf.float32)
     batch_index, train_x, train_y = get_train_data()
     with tf.variable_scope("sec_lstm"):
-        pred, _ = lstm(X, keep_prob)
+        pred, _ = lstm(X)
     # 损失函数
     loss = tf.reduce_mean(0.5 * tf.square(tf.reshape(pred, [-1]) - tf.reshape(Y, [-1])))
     train_op = tf.train.AdamOptimizer(lr).minimize(loss)
@@ -137,35 +134,34 @@ def train_lstm():
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         # 重复训练
-        for i in range(20000):
+        for i in range(10000):
             for step in range(len(batch_index) - 1):
                 _, loss_ = sess.run([train_op, loss], feed_dict={X: train_x[batch_index[step]:batch_index[step + 1]],
-                                                                 Y: train_y[batch_index[step]:batch_index[step + 1]],
-                                                                 keep_prob: 0.5})
+                                                                 Y: train_y[batch_index[step]:batch_index[step + 1]]})
                 print("迭代次数:", i, " 成本:", loss_)
             if i % 50 == 0:
-                print("模型保存到: ", saver.save(sess, 'model_4/stock_predict.ckpt'))
+                print("模型保存到: ", saver.save(sess, 'model_4_2/stock_predict.ckpt'))
         print("模型训练已完成！")
 
 
-train_lstm()
+# train_lstm()
 
 
 # ————————————————预测模型————————————————————
 def prediction():
     X = tf.placeholder(tf.float32, shape=[None, time_step, input_size])
     mean, std, test_x, test_y, date_x, date_y = get_test_data()
-    with tf.variable_scope("sec_lstm", reuse=True):
-        pred, _ = lstm(X, keep_prob=0.5)
+    # with tf.variable_scope("sec_lstm", reuse=True):
+    with tf.variable_scope("sec_lstm"):
+        pred, _ = lstm(X)
     saver = tf.train.Saver(tf.global_variables())
     with tf.Session() as sess:
         # 参数恢复
-        module_file = tf.train.latest_checkpoint('model_4')
+        module_file = tf.train.latest_checkpoint('model_4_2')
         saver.restore(sess, module_file)
         test_predict = []
         for step in range(len(test_x)):
             prob = sess.run(pred, feed_dict={X: [test_x[step]]})
-            print(prob)
             predict = prob.reshape((-1))
             test_predict.extend(predict)
         test_y = np.array(test_y) * std[0] + mean[0]
@@ -192,7 +188,7 @@ def prediction():
         plt.ylabel('股票价格(元)')
         plt.title('股票价格预测图(准确率:%.2f%%)' % (acc * 100))
         plt.legend((line1, line2), ('预测数据', '真实数据'), loc='upper left')
-        plt.savefig('figure/股票价格预测图.png', dpi=300)
+        plt.savefig('figure/股票价格预测图_4_1.png', dpi=300)
         plt.show()
 
 
