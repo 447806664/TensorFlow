@@ -14,7 +14,7 @@ TIME = 10 * 60  # 程序状态检测间隔（单位：秒钟）
 CMD = "stock_crawler.py"  # 需要执行程序的绝对路径
 
 
-class Auto_Run():
+class Auto_Run:
     def __init__(self, sleep_time, cmd):
         self.sleep_time = sleep_time
         self.cmd = cmd
